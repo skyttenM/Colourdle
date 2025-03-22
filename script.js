@@ -1,11 +1,4 @@
-/*
-Mangler:
- - good job:)
-
-*/
-
-
-let colourValues = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
+let colourValues = ["0","1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
 let numberOfPossibleGuesses = 5;
 let answerColour = "";
 let answerCircle = {};
@@ -16,6 +9,7 @@ let colorCells = [];
 let feedBackCells = [];
 let percentCells = [];
 let count = 0;
+let submitButton;
 
 function answerMaker() {
     let answerAsList = [];
@@ -114,7 +108,8 @@ function createTable(){
 }
 
 function createSubmitButton(){
-    let submitButton = createButton("SUBMIT");
+    submitButton = createButton("SUBMIT");
+    //global submitButton
     //submitButton.style.position("absolute");
     submitButton.position(width/2 + 100, 670);
     submitButton.style('width', '250px'); 
@@ -125,16 +120,19 @@ function createSubmitButton(){
 }
 
 function updateColorCells() {
-    count ++;
+    count++;
     for (let i = 0; i < count; i++) {
         const hexValue = inputFields[i].value;
         if (hexValue === "#000000"){
+            colorCells[i].style.backgroundColor = '#FFFFFF';
+            feedBackCells[i].innerText = "The correct answer is never #000000";
+            count--;
             break;  
         } 
 
         else if (/^#([0-9A-F]{6})$/i.test(hexValue)) { // Check if valid hex
             colorCells[i].style.backgroundColor = hexValue;
-            inputFields[i].disabled = true; //make input unchangable
+            inputFields[i].disabled = true; // Make input unchangable
         
             let answerRed = parseInt(answerColour.substring(1, 3), 16);
             let answerGreen = parseInt(answerColour.substring(3, 5), 16);
@@ -172,12 +170,15 @@ function updateColorCells() {
             }
             inputFields[i].outerHTML = `<td style="width: 400px; height: 50px; font-size: 20px;">${coloredHex}</td>`;
         }   
-
         else {
             colorCells[i].style.backgroundColor = '#FFFFFF';
             feedBackCells[i].innerText = "That is not a valid 6 digit hex, try again";
             count--;
         }
+    }
+    if (count == 6) { // Game Over
+        text("The Correct Answer Was " + answerColour, width / 2, 620);
+        submitButton.style('visibility', 'hidden'); 
     }
 }
 
